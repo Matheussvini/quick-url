@@ -1,0 +1,52 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Url {
+  id          String   @id @default(uuid())
+  owner_id     String?  
+  original_url String   
+  clicks_count Int      @default(0) // bom ter default zero para contagem
+  created_at   DateTime @default(now()) 
+  updated_at   DateTime? @updatedAt 
+  deleted_at   DateTime? 
+  short_code   String   @unique
+
+  owner       Owner?   @relation(fields: [owner_id], references: [id], name: "OwnerUrls")
+  clicks      Click[]  @relation("UrlToClicks")
+
+  @@map("urls")
+}
+
+model Owner {
+  id         String   @id @default(uuid())
+  external_id String   @unique 
+  name       String
+  created_at  DateTime @default(now()) 
+  updated_at  DateTime? @updatedAt 
+
+  urls       Url[]    @relation("OwnerUrls")
+
+  @@map("owners")
+}
+model Click {
+  id             String   @id @default(uuid())
+  created_at     DateTime @default(now()) 
+  shortened_url_id String   
+
+  shortenedUrl   Url      @relation("UrlToClicks", fields: [shortened_url_id], references: [id])
+
+  @@map("clicks")
+}
+
