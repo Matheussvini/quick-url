@@ -1,0 +1,50 @@
+services:
+  database:
+    container_name: micro_db
+    image: "postgres:alpine"
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=docker
+    networks:
+      - app-net
+
+  redpanda:
+    container_name: micro_redpanda
+    image: redpandadata/redpanda:latest
+    ports:
+      - "9092:9092"
+      - "9644:9644"
+    command:
+      - redpanda
+      - start
+      - --overprovisioned
+      - --smp 1
+      - --memory 1G
+      - --reserve-memory 0M
+      - --node-id 0
+      - --check=false
+      - --kafka-addr PLAINTEXT://0.0.0.0:9092
+      - --advertise-kafka-addr PLAINTEXT://micro_redpanda:9092
+    networks:
+      - app-net
+
+  users-api:
+    container_name: micro_users
+    build:
+      context: ./apps/users
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    depends_on:
+      - redpanda
+      - database
+    networks:
+      - app-net
+    env_file:
+      - ./apps/users/.env
+
+networks:
+  app-net:
+    driver: bridge
