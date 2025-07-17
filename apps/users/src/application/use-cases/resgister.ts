@@ -1,3 +1,4 @@
+import { PublishUserCreatedUseCase } from './publish-user-created';
 import { User } from '@prisma/client';
 import { UsersRepository } from '../repositories/users-repository';
 import { hash } from 'bcryptjs';
@@ -14,7 +15,10 @@ interface RegisterUseCaseResponse {
 }
 
 export class RegisterUseCase {
-  constructor(private usersRepository: UsersRepository) {}
+  constructor(
+    private usersRepository: UsersRepository,
+    private publishUserCreated: PublishUserCreatedUseCase,
+  ) {}
 
   async execute({
     name,
@@ -31,6 +35,11 @@ export class RegisterUseCase {
       name,
       email,
       password_hash,
+    });
+
+    await this.publishUserCreated.execute({
+      userId: user.id,
+      name: user.name,
     });
 
     return {
