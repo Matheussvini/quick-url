@@ -1,0 +1,7 @@
+http:
+  middlewares:
+    users-jwt:
+      plugin:
+        jwt:
+          secret: "SUA_CHAVE_SECRETA_JWT_BASE64"
+          # configure aqui as opções que precisar do plugin JWT do Traefik

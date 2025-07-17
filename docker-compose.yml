@@ -1,4 +1,25 @@
+version: "3.9"
+
 services:
+  traefik:
+    image: traefik:v2.11
+    container_name: traefik
+    command:
+      - "--log.level=DEBUG"
+      - "--api.dashboard=true"
+      - "--entrypoints.web.address=:8080"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--accesslog=true"
+      - "--providers.file.filename=/etc/traefik/middlewares.yaml" # middleware JWT
+    ports:
+      - "8080:8080" # Traefik dashboard + proxy HTTP
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./traefik/middlewares.yaml:/etc/traefik/middlewares.yaml:ro
+    networks:
+      - app-net
+
   database:
     container_name: micro_db
     image: "postgres:alpine"
@@ -44,6 +65,13 @@ services:
       - app-net
     env_file:
       - ./apps/users/.env
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.users-api.rule=Path(`/users`)"
+      - "traefik.http.routers.users-api.entrypoints=web"
+      - "traefik.http.routers.users-api.service=users-api-service"
+      - "traefik.http.services.users-api-service.loadbalancer.server.port=3000"
+      # - "traefik.http.routers.users-api.middlewares=users-jwt"
 
 networks:
   app-net:
