@@ -1,5 +1,5 @@
-import { kafka } from './kafka';
-import { env } from '../../../env'; // ajuste o caminho conforme seu projeto
+import { kafka } from './kafka/kafka';
+import { env } from '../../env'; // ajuste o caminho conforme seu projeto
 
 async function testProducer() {
   const producer = kafka.producer({
