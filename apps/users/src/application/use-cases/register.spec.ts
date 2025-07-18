@@ -24,14 +24,12 @@ const userMockInput = {
 };
 
 let usersRepository: InMemoryUsersRepository;
-let publishUserCreated: PublishUserCreatedUseCaseMock;
 let sut: RegisterUseCase;
 
 describe('Register Use Case', () => {
   beforeEach(() => {
     usersRepository = new InMemoryUsersRepository();
-    publishUserCreated = new PublishUserCreatedUseCaseMock();
-    sut = new RegisterUseCase(usersRepository, publishUserCreated);
+    sut = new RegisterUseCase(usersRepository);
   });
 
   it('should to register', async () => {
@@ -48,29 +46,6 @@ describe('Register Use Case', () => {
       user.password_hash,
     );
     expect(isPasswordCorrectlyHashed).toBe(true);
-  });
-
-  it('should to publish user created event upon registration', async () => {
-    const { user } = await sut.execute(userMockInput);
-
-    expect(publishUserCreated.calledWith).toEqual(
-      expect.objectContaining({
-        userId: user.id,
-        name: user.name,
-      }),
-    );
-    expect(publishUserCreated.calledWith.userId).toEqual(expect.any(String));
-  });
-
-  it('should throw if publishUserCreated fails', async () => {
-    // Força o método do publisher a lançar erro
-    vi.spyOn(publishUserCreated, 'execute').mockRejectedValueOnce(
-      new Error('Kafka is down'),
-    );
-
-    await expect(sut.execute(userMockInput)).rejects.toThrowError(
-      'Kafka is down',
-    );
   });
 
   it('should not allow to register with same email', async () => {

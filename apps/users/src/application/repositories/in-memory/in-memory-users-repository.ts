@@ -24,4 +24,9 @@ export class InMemoryUsersRepository implements UsersRepository {
     this.users.push(user);
     return user;
   }
+
+  async createWithOutboxEvent(data: Prisma.UserCreateInput): Promise<User> {
+    const user = await this.create(data);
+    return user;
+  }
 }

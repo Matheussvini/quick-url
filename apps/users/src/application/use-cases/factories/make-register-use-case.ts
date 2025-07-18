@@ -6,10 +6,5 @@ import { PublishUserCreatedUseCase } from '../publish-user-created';
 export function makeRegisterUseCase() {
   const usersRepository = new PrismaUsersRepository();
 
-  const messagingAdapter = new KafkaMessagingAdapter();
-  const publishUserCreatedUseCase = new PublishUserCreatedUseCase(
-    messagingAdapter,
-  );
-
-  return new RegisterUseCase(usersRepository, publishUserCreatedUseCase);
+  return new RegisterUseCase(usersRepository);
 }
