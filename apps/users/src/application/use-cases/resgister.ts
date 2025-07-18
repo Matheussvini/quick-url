@@ -31,15 +31,10 @@ export class RegisterUseCase {
 
     if (userWithSameEmail) throw new UserAlreadyExistsError();
 
-    const user = await this.usersRepository.create({
+    const user = await this.usersRepository.createWithOutboxEvent({
       name,
       email,
       password_hash,
-    });
-
-    await this.publishUserCreated.execute({
-      userId: user.id,
-      name: user.name,
     });
 
     return {

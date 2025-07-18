@@ -25,5 +25,16 @@ model User {
   @@map("users")
 }
 
+model OutboxEvent {
+  id           String   @id @default(uuid())
+  event_type   String
+  payload      Json
+  processed    Boolean  @default(false)
+  created_at   DateTime @default(now())
+  processed_at DateTime?
+
+  @@index([processed])
+}
+
 
 
