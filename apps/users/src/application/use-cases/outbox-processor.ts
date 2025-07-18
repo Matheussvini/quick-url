@@ -1,7 +1,7 @@
 import { producer } from '@/infra/messaging/producer';
 import { OutboxEventsRepository } from '../repositories/outbox-events-repository';
 
-export class OutboxProcessorUserCase {
+export class OutboxProcessorUseCase {
   constructor(private outboxRepository: OutboxEventsRepository) {}
 
   async process() {

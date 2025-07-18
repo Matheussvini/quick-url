@@ -2,20 +2,7 @@ import { compare } from 'bcryptjs';
 import { RegisterUseCase } from './resgister';
 import { expect, describe, it, beforeEach, vi } from 'vitest';
 import { UserAlreadyExistsError } from './errors/user-alredy-exists-error';
-import { PublishUserCreatedUseCase } from './publish-user-created';
 import { InMemoryUsersRepository } from '../repositories/in-memory/in-memory-users-repository';
-
-class PublishUserCreatedUseCaseMock extends PublishUserCreatedUseCase {
-  public calledWith: any = null;
-
-  constructor() {
-    super({ publish: async () => {} } as any); // simula o messagingAdapter
-  }
-
-  async execute(data: any) {
-    this.calledWith = data;
-  }
-}
 
 const userMockInput = {
   name: 'John Doe',
