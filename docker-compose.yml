@@ -25,8 +25,8 @@ services:
       - --reserve-memory 0M
       - --node-id 0
       - --check=false
-      - --kafka-addr PLAINTEXT://0.0.0.0:9092
-      - --advertise-kafka-addr PLAINTEXT://micro_redpanda:9092
+      - --kafka-addr INTERNAL://0.0.0.0:9093,EXTERNAL://0.0.0.0:9092
+      - --advertise-kafka-addr INTERNAL://micro_redpanda:9093,EXTERNAL://localhost:9092
     networks:
       - app-net
 
