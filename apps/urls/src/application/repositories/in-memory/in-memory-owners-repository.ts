@@ -3,7 +3,7 @@ import { OwnersRepository } from '../owners-repository';
 import { randomUUID } from 'crypto';
 
 export class InMemoryOwnersRepository implements OwnersRepository {
-  private owners: Owner[] = [];
+  public owners: Owner[] = [];
 
   async create(data: Prisma.OwnerCreateInput): Promise<Owner> {
     const owner: Owner = {
