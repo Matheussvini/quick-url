@@ -1,4 +1,4 @@
-import { Kafka } from 'kafkajs';
+import { Kafka, KafkaConfig } from 'kafkajs';
 
 import { env } from '@/env';
 
@@ -9,7 +9,7 @@ if (env.KAFKA_ENV === 'cloud' && (!env.KAFKA_USER || !env.KAFKA_PASS)) {
   throw new Error('Kafka user and password must be set for cloud environment!');
 }
 
-const kafkaConfig: any = {
+const kafkaConfig: KafkaConfig = {
   clientId: 'users',
   brokers: [env.KAFKA_BROKER],
 };

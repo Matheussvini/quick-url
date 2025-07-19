@@ -1,4 +1,3 @@
-import { PublishUserCreatedUseCase } from './publish-user-created';
 import { User } from '@prisma/client';
 import { UsersRepository } from '../repositories/users-repository';
 import { hash } from 'bcryptjs';

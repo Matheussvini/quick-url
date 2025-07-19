@@ -1,5 +1,6 @@
 import { Kafka } from 'kafkajs';
 import { env } from '@/env';
+import type { KafkaConfig } from 'kafkajs';
 
 if (!process.env.KAFKA_BROKER) {
   throw new Error('Kafka broker address not set!');
@@ -8,7 +9,7 @@ if (env.KAFKA_ENV === 'cloud' && (!env.KAFKA_USER || !env.KAFKA_PASS)) {
   throw new Error('Kafka user and password must be set for cloud environment!');
 }
 
-const kafkaConfig: any = {
+const kafkaConfig: KafkaConfig = {
   clientId: 'urls',
   brokers: [env.KAFKA_BROKER],
 };

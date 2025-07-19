@@ -1,3 +1,4 @@
+import { ResourceNotFoundError } from '@/application/usecases/errors/resource-not-found-error';
 import { makeShortenUrlUseCase } from '@/application/usecases/factories/make-shorten-url-use-case';
 import { FastifyReply, FastifyRequest } from 'fastify';
 import z from 'zod';
@@ -23,6 +24,11 @@ export async function shortenUrl(request: FastifyRequest, reply: FastifyReply) {
 
     return reply.status(201).send({ shortUrl });
   } catch (err) {
+    if (err instanceof ResourceNotFoundError) {
+      return reply.status(404).send({
+        message: 'Owner not found',
+      });
+    }
     throw err;
   }
 }
