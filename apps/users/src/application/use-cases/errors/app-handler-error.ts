@@ -20,8 +20,6 @@ export function errorHandler(
     // TODO: Log to an external tool like DataDog/NewRelic/Sentry
   }
 
-  console.log('reply error handler', error);
-
   return reply.status(error.statusCode ?? 500).send({
     error: error.name ?? 'Internal server error',
     details: error.message ?? 'An unexpected error occurred.',

@@ -4,7 +4,6 @@ import { FastifyReply, FastifyRequest } from 'fastify';
 import z from 'zod';
 
 export async function register(request: FastifyRequest, reply: FastifyReply) {
-  console.log('init register controller', request.body);
   const registerBodySchema = z.object({
     name: z.string().nonempty(),
     email: z.email(),
@@ -25,7 +24,6 @@ export async function register(request: FastifyRequest, reply: FastifyReply) {
     if (err instanceof UserAlreadyExistsError) {
       return reply.status(409).send({ message: err.message });
     }
-    console.log('error in register controller', err);
     throw err;
   }
   return reply.status(201).send();

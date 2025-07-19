@@ -3,7 +3,6 @@ import { register } from './register';
 import { authenticate } from './authenticate';
 
 export async function usersRoutes(app: FastifyInstance) {
-  console.log('usersRoutes registered');
   app.post('/users', register);
   app.post('/users/authenticate', authenticate);
 }

@@ -21,7 +21,6 @@ async function testProducer() {
   });
 
   await producer.disconnect();
-  console.log('Mensagem enviada com sucesso!');
 }
 
 testProducer().catch(console.error);
