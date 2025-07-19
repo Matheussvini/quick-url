@@ -25,7 +25,7 @@ export class PrismaUsersRepository implements UsersRepository {
 
       await tx.outboxEvent.create({
         data: {
-          event_type: 'user-created',
+          event_type: 'users.user-created',
           payload: {
             userId: user.id,
             name: user.name,
