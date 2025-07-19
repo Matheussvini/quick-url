@@ -1,5 +1,5 @@
-import { ResourceNotFoundError } from '@/application/usecases/errors/resource-not-found-error';
-import { makeShortenUrlUseCase } from '@/application/usecases/factories/make-shorten-url-use-case';
+import { ResourceNotFoundError } from '@/application/use-cases/errors/resource-not-found-error';
+import { makeShortenUrlUseCase } from '@/application/use-cases/factories/make-shorten-url-use-case';
 import { FastifyReply, FastifyRequest } from 'fastify';
 import z from 'zod';
 
