@@ -2,6 +2,7 @@ import { Prisma, Url } from '@prisma/client';
 import { UrlsRepository } from '../urls-repository';
 import { randomUUID } from 'crypto';
 import { ResourceNotFoundError } from '@/application/use-cases/errors/resource-not-found-error';
+import { FriendlyUrl } from '@/application/use-cases/search-owner-urls';
 
 export class InMemoryUrlsRepository implements UrlsRepository {
   public urls: Url[] = [];
@@ -69,5 +70,27 @@ export class InMemoryUrlsRepository implements UrlsRepository {
 
     this.urls[urlIndex] = url;
     return url;
+  }
+
+  async searchByOwnerIdAndQuery(
+    owner_id: string,
+    query: string,
+    page: number,
+  ): Promise<FriendlyUrl[]> {
+    const urls = this.urls.filter(
+      (url) =>
+        url.owner_id === owner_id &&
+        url.original_url.toLowerCase().includes(query.toLowerCase()) &&
+        url.deleted_at === null,
+    );
+
+    const paginatedUrls = urls.slice((page - 1) * 20, page * 20);
+
+    return paginatedUrls.map((url) => ({
+      id: url.id,
+      short_code: url.short_code,
+      original_url: url.original_url,
+      clicks_count: url.clicks_count,
+    }));
   }
 }
