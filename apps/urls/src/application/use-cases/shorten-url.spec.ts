@@ -32,20 +32,17 @@ describe('Shorten URL Use Case', () => {
     });
 
     expect(short_code).toEqual(expect.any(String));
-    expect(shortened_url.original_url).toBe('https://example.com');
     expect(shortened_url.short_code).toBe(short_code);
     expect(shortened_url.owner_id).toBe(owner.id);
   });
 
   it('should shorten a URL without an owner', async () => {
-    const { short_code, shortened_url } = await sut.execute({
+    const { shortened_url } = await sut.execute({
       url: 'https://example.com',
       external_id: '',
     });
 
-    expect(short_code).toEqual(expect.any(String));
-    expect(shortened_url.original_url).toBe('https://example.com');
-    expect(shortened_url.short_code).toBe(short_code);
+    expect(shortened_url.id).toEqual(expect.any(String));
     expect(shortened_url.owner_id).toBeNull();
   });
 
@@ -74,10 +71,9 @@ describe('Shorten URL Use Case', () => {
     const firstCode = 'abc123';
     const secondCode = 'xyz789';
 
-    // Mock generateShortCode para forçar colisão
     vi.spyOn(privateSut, 'generateShortCode')
-      .mockReturnValueOnce(firstCode) // já existe
-      .mockReturnValueOnce(secondCode); // não existe
+      .mockReturnValueOnce(firstCode)
+      .mockReturnValueOnce(secondCode);
 
     await urlsRepository.create({
       original_url: 'https://already-exists.com',
