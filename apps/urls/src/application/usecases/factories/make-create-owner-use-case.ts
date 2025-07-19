@@ -1,4 +1,4 @@
-import { PrismaOwnersRepository } from '@/infra/database/prisma/repositories/prisma-owners-repository';
+import { PrismaOwnersRepository } from '@/application/repositories/prisma/prisma-owners-repository';
 import { CreateOwnerUseCase } from '../create-owner';
 
 export function makeCreateOwnerUseCase() {

@@ -1,5 +1,5 @@
 import { Owner } from '@prisma/client';
-import { OwnersRepository } from '../repositories/owners-repositories';
+import { OwnersRepository } from '../repositories/owners-repository';
 
 interface CreateOwnerUseCaseRequest {
   external_id: string;
