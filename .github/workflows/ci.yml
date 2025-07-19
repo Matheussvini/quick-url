@@ -20,14 +20,14 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      # Testes de cada serviço
+      # Tests for each service
       - name: Test Users Service
         run: npm run test --workspace=apps/users
 
       - name: Test Urls Service
         run: npm run test --workspace=apps/urls
 
-      # Build de cada serviço
+      # Build for each service
       - name: Build Users Service
         run: npm run build --workspace=apps/users
 
