@@ -10,10 +10,10 @@ export class PrismaUrlsRepository implements UrlsRepository {
       },
     });
   }
-  findById(id: string): Promise<Url | null> {
+  findById(): Promise<Url | null> {
     throw new Error('Method not implemented.');
   }
-  findByExternalId(external_id: string): Promise<Url | null> {
+  findByExternalId(): Promise<Url | null> {
     throw new Error('Method not implemented.');
   }
   async create(data: Prisma.UrlCreateInput): Promise<Url> {

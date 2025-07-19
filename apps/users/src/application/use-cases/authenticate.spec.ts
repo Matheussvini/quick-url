@@ -3,7 +3,6 @@ import { InMemoryUsersRepository } from '../repositories/in-memory/in-memory-use
 import { AuthenticateUseCase } from './authenticate';
 import { beforeEach, describe, expect, it } from 'vitest';
 import { InvalidCredentialsError } from './errors/invalid-credentials-error';
-import { Prisma } from '@prisma/client';
 
 let usersRepository: InMemoryUsersRepository;
 let sut: AuthenticateUseCase;

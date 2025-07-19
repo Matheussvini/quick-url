@@ -1,6 +1,6 @@
 import { compare } from 'bcryptjs';
 import { RegisterUseCase } from './resgister';
-import { expect, describe, it, beforeEach, vi } from 'vitest';
+import { expect, describe, it, beforeEach } from 'vitest';
 import { UserAlreadyExistsError } from './errors/user-alredy-exists-error';
 import { InMemoryUsersRepository } from '../repositories/in-memory/in-memory-users-repository';
 

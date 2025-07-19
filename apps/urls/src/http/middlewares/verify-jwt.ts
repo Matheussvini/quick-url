@@ -7,7 +7,7 @@ export function verifyJwt({ allowAnonymous = false } = {}) {
 
     try {
       await request.jwtVerify();
-    } catch (err) {
+    } catch {
       return reply
         .status(401)
         .send({ message: 'Unauthorized or invalid token.' });
