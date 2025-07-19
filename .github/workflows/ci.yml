@@ -1,0 +1,35 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm install
+
+      # Tests for each service
+      - name: Test Users Service
+        run: npm run test --workspace=apps/users
+
+      - name: Test Urls Service
+        run: npm run test --workspace=apps/urls
+
+      # Build for each service
+      - name: Build Users Service
+        run: npm run build --workspace=apps/users
+
+      - name: Build Urls Service
+        run: npm run build --workspace=apps/urls

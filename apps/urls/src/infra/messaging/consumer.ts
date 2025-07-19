@@ -1,4 +1,4 @@
-import { makeCreateOwnerUseCase } from '@/application/usecases/factories/make-create-owner-use-case';
+import { makeCreateOwnerUseCase } from '@/application/use-cases/factories/make-create-owner-use-case';
 import { kafka } from './kafka/kafka';
 
 interface UserCreatedMessage {
