@@ -4,7 +4,7 @@ import { randomUUID } from 'crypto';
 import { ResourceNotFoundError } from '@/application/use-cases/errors/resource-not-found-error';
 
 export class InMemoryUrlsRepository implements UrlsRepository {
-  private urls: Url[] = [];
+  public urls: Url[] = [];
 
   async create(data: Prisma.UrlCreateInput): Promise<Url> {
     const url: Url = {
@@ -31,14 +31,6 @@ export class InMemoryUrlsRepository implements UrlsRepository {
     return (
       this.urls.find(
         (url) => url.short_code === short_code && url.deleted_at === null,
-      ) || null
-    );
-  }
-
-  async findByOwnerId(owner_id: string): Promise<Url | null> {
-    return (
-      this.urls.find(
-        (url) => url.owner_id === owner_id && url.deleted_at === null,
       ) || null
     );
   }

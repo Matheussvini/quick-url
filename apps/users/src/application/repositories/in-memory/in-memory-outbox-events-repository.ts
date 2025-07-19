@@ -10,7 +10,7 @@ interface InMemoryOutboxEvent {
 }
 
 export class InMemoryOutboxEventsRepository implements OutboxEventsRepository {
-  private events: InMemoryOutboxEvent[] = [];
+  public events: InMemoryOutboxEvent[] = [];
 
   async findUnprocessed(limit: number) {
     return this.events.filter((event) => !event.processed).slice(0, limit);
