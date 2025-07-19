@@ -2,6 +2,7 @@ import { FastifyInstance } from 'fastify';
 import { shortenUrl } from './shorten-url';
 import { verifyJwt } from '@/http/middlewares/verify-jwt';
 import { updateUrl } from './update-url';
+import { deleteUrl } from './delete-url';
 
 export async function urlsRoutes(app: FastifyInstance) {
   app.post(
@@ -10,4 +11,5 @@ export async function urlsRoutes(app: FastifyInstance) {
     shortenUrl,
   );
   app.patch('/urls/:id', { onRequest: [verifyJwt()] }, updateUrl);
+  app.delete('/urls/:id', { onRequest: [verifyJwt()] }, deleteUrl);
 }
