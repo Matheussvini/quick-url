@@ -1,0 +1,27 @@
+{
+  "name": "quick-url-monorepo",
+  "version": "1.0.0",
+  "workspaces": [
+    "apps/*"
+  ],
+  "scripts": {
+    "prepare": "husky",
+    "lint": "eslint . --fix"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "@commitlint/cli": "^19.8.1",
+    "@commitlint/config-conventional": "^19.8.1",
+    "@eslint/js": "9.31.0",
+    "eslint": "9.31.0",
+    "eslint-config-prettier": "10.1.5",
+    "eslint-plugin-prettier": "5.5.1",
+    "globals": "16.3.0",
+    "husky": "^9.1.7",
+    "prettier": "3.6.2",
+    "typescript-eslint": "8.37.0"
+  }
+}
