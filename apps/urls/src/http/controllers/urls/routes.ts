@@ -3,8 +3,10 @@ import { shortenUrl } from './shorten-url';
 import { verifyJwt } from '@/http/middlewares/verify-jwt';
 import { updateUrl } from './update-url';
 import { deleteUrl } from './delete-url';
+import { search } from './search';
 
 export async function urlsRoutes(app: FastifyInstance) {
+  app.get('/urls', { onRequest: [verifyJwt()] }, search);
   app.post(
     '/urls',
     { onRequest: [verifyJwt({ allowAnonymous: true })] },
