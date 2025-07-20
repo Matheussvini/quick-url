@@ -1,4 +1,4 @@
-import { Prisma, Url } from '@prisma/client';
+import { Prisma, Url } from '@/generated/.prisma/client';
 import { UrlsRepository } from '../urls-repository';
 import { randomUUID } from 'crypto';
 import { ResourceNotFoundError } from '@/application/use-cases/errors/resource-not-found-error';

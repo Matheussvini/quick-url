@@ -1,4 +1,4 @@
-import { Owner, Prisma } from '@prisma/client';
+import { Owner, Prisma } from '@/generated/.prisma/client';
 import { OwnersRepository } from '../owners-repository';
 import { randomUUID } from 'crypto';
 

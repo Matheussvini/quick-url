@@ -1,4 +1,4 @@
-import { Owner } from '@prisma/client';
+import { Owner } from '@/generated/.prisma/client';
 import { OwnersRepository } from '../repositories/owners-repository';
 import { OwnerAlreadyExistsError } from './errors/owner-alredy-exists-error';
 

@@ -1,4 +1,4 @@
-import { JsonValue } from '@prisma/client/runtime/library';
+import { JsonValue } from '@/generated/.prisma/client/runtime/library';
 import { OutboxEventsRepository } from '../outbox-events-repository';
 interface InMemoryOutboxEvent {
   id: string;

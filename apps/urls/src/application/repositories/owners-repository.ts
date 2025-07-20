@@ -1,4 +1,4 @@
-import { Owner, Prisma } from '@prisma/client';
+import { Owner, Prisma } from '@/generated/.prisma/client';
 
 export interface OwnersRepository {
   create(data: Prisma.OwnerCreateInput): Promise<Owner>;

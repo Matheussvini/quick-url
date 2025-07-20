@@ -7,7 +7,13 @@ import eslintConfigPrettier from 'eslint-config-prettier';
 // ingnore commitlint.config.js
 export default defineConfig([
   {
-    ignores: ['**/build/'],
+    ignores: [
+      '**/build/',
+      '**/dist/',
+      '**/coverage/',
+      '**/node_modules/',
+      '**/generated/',
+    ],
   },
   {
     files: ['**/*.{js,mjs,cjs,ts,mts,cts}'],
