@@ -1,4 +1,4 @@
-name: CI
+name: CI Monorepo
 
 on:
   pull_request:
@@ -17,19 +17,19 @@ jobs:
           node-version: 22
           cache: 'npm'
 
-      - name: Install dependencies
+      - name: Install root and workspace dependencies
         run: npm install
 
-      # Tests for each service
-      - name: Test Users Service
-        run: npm run test --workspace=apps/users
+      - name: Run ESLint across the monorepo
+        run: npm run lint
 
-      - name: Test Urls Service
-        run: npm run test --workspace=apps/urls
+      # --- Testes ---
+      - name: Generate Prisma Clients for all services
+        run: npm run prisma:generate:all
 
-      # Build for each service
-      - name: Build Users Service
-        run: npm run build --workspace=apps/users
+      - name: Run tests for all services
+        run: npm run test
 
-      - name: Build Urls Service
-        run: npm run build --workspace=apps/urls
+      # --- Build ---
+      - name: Build all services
+        run: npm run build
