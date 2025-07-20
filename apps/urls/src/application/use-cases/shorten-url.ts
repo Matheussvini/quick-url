@@ -1,4 +1,4 @@
-import { Url } from '@prisma/client';
+import { Url } from '@/generated/.prisma/client';
 import { UrlsRepository } from '../repositories/urls-repository';
 import { OwnersRepository } from '../repositories/owners-repository';
 import { ResourceNotFoundError } from './errors/resource-not-found-error';

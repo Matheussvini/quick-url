@@ -1,4 +1,4 @@
-import { OutboxEvent } from '@prisma/client';
+import { OutboxEvent } from '@/generated/.prisma/client';
 
 export interface OutboxEventsRepository {
   findUnprocessed(limit: number): Promise<OutboxEvent[]>;

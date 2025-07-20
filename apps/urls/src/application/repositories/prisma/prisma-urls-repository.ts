@@ -1,4 +1,4 @@
-import { Prisma, Url } from '@prisma/client';
+import { Prisma, Url } from '@/generated/.prisma/client';
 import { UrlsRepository } from '../urls-repository';
 import { prisma } from '@/lib/prisma';
 import { FriendlyUrl } from '@/application/use-cases/search-owner-urls';

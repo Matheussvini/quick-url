@@ -1,4 +1,4 @@
-import { Owner, Prisma } from '@prisma/client';
+import { Owner, Prisma } from '@/generated/.prisma/client';
 import { prisma } from '../../../lib/prisma';
 import { OwnersRepository } from '@/application/repositories/owners-repository';
 
