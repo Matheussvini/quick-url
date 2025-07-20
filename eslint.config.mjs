@@ -4,15 +4,10 @@ import tseslint from 'typescript-eslint';
 import { defineConfig } from 'eslint/config';
 import eslintConfigPrettier from 'eslint-config-prettier';
 
+// ingnore commitlint.config.js
 export default defineConfig([
   {
-    ignores: [
-      '**/build/',
-      '**/dist/',
-      '**/coverage/',
-      '**/node_modules/',
-      '**/generated/',
-    ],
+    ignores: ['**/build/'],
   },
   {
     files: ['**/*.{js,mjs,cjs,ts,mts,cts}'],

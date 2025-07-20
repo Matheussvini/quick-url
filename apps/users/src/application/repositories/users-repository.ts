@@ -1,4 +1,4 @@
-import { Prisma, User } from '@/generated/.prisma/client';
+import { Prisma, User } from '@prisma/client';
 
 export interface UsersRepository {
   findByEmail(email: string): Promise<User | null>;
