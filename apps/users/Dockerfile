@@ -1,44 +1,30 @@
-# === Etapa 1: deps (instala dependências de dev e prod) ===
-FROM node:22-alpine AS deps
+# === Stage 1: Base - Setup Node.js and dependencies for the entire monorepo ===
+FROM node:22-alpine AS base
 
-WORKDIR /usr/src/app
-
-COPY package.json package-lock.json ./
+WORKDIR /app
+COPY package*.json ./
+COPY apps/users/package.json ./apps/users/package.json
 RUN npm ci
 
+# === Stage 2: Build - Build da aplicação específica (users-api) ===
+FROM base AS build
 
-# === Etapa 2: build (gera Prisma Client e build da aplicação) ===
-FROM node:22-alpine AS build
-
-WORKDIR /usr/src/app
-
-COPY --from=deps /usr/src/app/node_modules ./node_modules
+WORKDIR /app
 COPY . .
+RUN npm run prisma:generate:users
+RUN npm run build:users
 
-RUN npx prisma generate
-RUN npm run build
-
-
-# === Etapa 3: prod (apenas dependências de produção e app final) ===
+# === Stage 3: Production - Aplicação pronta para rodar ===
 FROM node:22-alpine AS prod
 
-WORKDIR /usr/src/app
+WORKDIR /app
+COPY package*.json ./
+COPY apps/users/package.json ./apps/users/package.json
+RUN npm ci --omit=dev --ignore-scripts
 
-COPY package.json package-lock.json ./
-RUN npm ci --omit=dev
-
-COPY --from=build /usr/src/app/node_modules/.prisma ./node_modules/.prisma
-COPY --from=build /usr/src/app/node_modules ./node_modules
-COPY --from=build /usr/src/app/build ./build
-COPY --from=build /usr/src/app/scripts ./scripts
-COPY --from=build /usr/src/app/prisma ./prisma 
-
-RUN chmod +x ./scripts/start.sh
+COPY --from=build /app/apps/users/build ./apps/users/build
+COPY --from=build /app/apps/users/prisma ./apps/users/prisma
+COPY --from=build /app/apps/users/src/generated/.prisma ./apps/users/src/generated/.prisma
 
 EXPOSE 3000
-#
-CMD ["/usr/src/app/scripts/start.sh"]
-
-# RUN npx prisma generate
-# RUN npx prisma migrate deploy
-# CMD ["node", "build/server.js"]
+CMD ["sh", "-c", "npm run prisma:migrate:deploy:users && npm run prisma:generate:users && npm run start:users"]

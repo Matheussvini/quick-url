@@ -1,21 +1,48 @@
 services:
-  database:
-    container_name: micro_db
-    image: "postgres:alpine"
+  database_users:
+    container_name: micro_db_users
+    image: 'bitnami/postgresql:latest'
     ports:
-      - "5432:5432"
+      - '5433:5432'
     environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=docker
+      - POSTGRESQL_USERNAME=postgres
+      - POSTGRESQL_PASSWORD=docker
+      - POSTGRESQL_DATABASE=users_db
     networks:
       - app-net
+    volumes:
+      - db_users_data:/bitnami/postgresql
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U postgres -d users_db']
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  database_urls:
+    container_name: micro_db_urls
+    image: 'bitnami/postgresql:latest'
+    ports:
+      - '5434:5432'
+    environment:
+      - POSTGRESQL_USERNAME=postgres
+      - POSTGRESQL_PASSWORD=docker
+      - POSTGRESQL_DATABASE=urls_db
+    networks:
+      - app-net
+    volumes:
+      - db_urls_data:/bitnami/postgresql
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U postgres -d urls_db']
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
   redpanda:
     container_name: micro_redpanda
     image: redpandadata/redpanda:latest
     ports:
-      - "9092:9092"
-      - "9644:9644"
+      - '9092:9092'
+      - '9644:9644'
     command:
       - redpanda
       - start
@@ -26,25 +53,59 @@ services:
       - --node-id 0
       - --check=false
       - --kafka-addr INTERNAL://0.0.0.0:9093,EXTERNAL://0.0.0.0:9092
-      - --advertise-kafka-addr INTERNAL://micro_redpanda:9093,EXTERNAL://localhost:9092
+      - --advertise-kafka-addr INTERNAL://redpanda:9093,EXTERNAL://localhost:9092
     networks:
       - app-net
+    healthcheck:
+      test: ['CMD', 'rpk', 'cluster', 'health']
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   users-api:
     container_name: micro_users
     build:
-      context: ./apps/users
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: apps/users/Dockerfile
     ports:
-      - "3000:3000"
+      - '3000:3000'
     depends_on:
-      - redpanda
-      - database
+      redpanda:
+        condition: service_healthy
+      database_users:
+        condition: service_healthy
     networks:
       - app-net
     env_file:
       - ./apps/users/.env
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+
+  urls-api:
+    container_name: micro_urls
+    build:
+      context: .
+      dockerfile: apps/urls/Dockerfile
+    ports:
+      - '3001:3001'
+    depends_on:
+      redpanda:
+        condition: service_healthy
+      database_urls:
+        condition: service_healthy
+    networks:
+      - app-net
+    env_file:
+      - ./apps/urls/.env
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
 
 networks:
   app-net:
     driver: bridge
+
+volumes:
+  db_users_data:
+  db_urls_data:
