@@ -1,4 +1,4 @@
-import { Prisma } from '@/generated/.prisma/client';
+import { Prisma } from '@prisma/client';
 import { prisma } from '../../../lib/prisma';
 import { UsersRepository } from '@/application/repositories/users-repository';
 
@@ -20,24 +20,22 @@ export class PrismaUsersRepository implements UsersRepository {
   }
 
   async createWithOutboxEvent(data: Prisma.UserCreateInput) {
-    const result = await prisma.$transaction(
-      async (tx: Prisma.TransactionClient) => {
-        const user = await tx.user.create({ data });
+    const result = await prisma.$transaction(async (tx) => {
+      const user = await tx.user.create({ data });
 
-        await tx.outboxEvent.create({
-          data: {
-            event_type: 'users.user-created',
-            payload: {
-              userId: user.id,
-              name: user.name,
-              email: user.email,
-            },
+      await tx.outboxEvent.create({
+        data: {
+          event_type: 'users.user-created',
+          payload: {
+            userId: user.id,
+            name: user.name,
+            email: user.email,
           },
-        });
+        },
+      });
 
-        return user;
-      },
-    );
+      return user;
+    });
 
     return result;
   }
