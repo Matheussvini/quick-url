@@ -4,7 +4,6 @@ import tseslint from 'typescript-eslint';
 import { defineConfig } from 'eslint/config';
 import eslintConfigPrettier from 'eslint-config-prettier';
 
-// ingnore commitlint.config.js
 export default defineConfig([
   {
     ignores: [
