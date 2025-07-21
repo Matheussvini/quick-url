@@ -3,7 +3,7 @@ _format_version: '3.0'
 services:
   # --- SERVIÇO DE USUÁRIOS (users-api) ---
   - name: users-api-service
-    host: '${KONG_USERS_API_URL}'
+    host: __KONG_USERS_API_URL__
     port: 3000
     routes:
       - name: users-register-route
@@ -20,7 +20,7 @@ services:
 
   # --- SERVIÇO DE URLs (urls-api) ---
   - name: urls-api-service
-    host: '${KONG_URLS_API_URL}'
+    host: __KONG_URLS_API_URL__
     port: 3001
     routes:
       - name: urls-click-route

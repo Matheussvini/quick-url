@@ -1,24 +1,18 @@
 #!/bin/sh
 
-# Encerra o script se qualquer comando falhar
-set -e
+# Substitui os placeholders do kong.yml pelas variáveis de ambiente
+envsubst < /etc/kong/kong.yml > /etc/kong/kong.generated.yml
 
-# Pega a porta fornecida pelo Render. Se não existir, usa 8000 como padrão.
-LISTEN_PORT=${PORT:-8000}
+# Inicia o Kong com o novo arquivo gerado
+exec kong start --conf /etc/kong/kong.conf.default --vv --declarative-config=/etc/kong/kong.generated.yml
+#!/bin/sh
 
-# Exporta as variáveis para o Kong usar
-# O Kong vai escutar na porta que o Render espera
-export KONG_PROXY_LISTEN="0.0.0.0:$LISTEN_PORT"
-export KONG_ADMIN_LISTEN="0.0.0.0:8001" # Mantém a porta de admin interna
+# Substitui variáveis de ambiente no kong.yml
+envsubst < /etc/kong/kong.yml > /tmp/kong.yml
 
-# Define o arquivo de configuração processado
-PROCESSED_KONG_CONFIG="/tmp/kong.yml"
-export KONG_DECLARATIVE_CONFIG=$PROCESSED_KONG_CONFIG
+# Define variáveis necessárias para modo DB-less
+export KONG_DATABASE=off
+export KONG_DECLARATIVE_CONFIG=/tmp/kong.yml
 
-# Substitui APENAS as variáveis especificadas no arquivo de configuração
-# Isso evita substituir acidentalmente outras strings que pareçam com variáveis
-envsubst '${KONG_USERS_API_URL} ${KONG_URLS_API_URL}' < /etc/kong/kong.yml > $PROCESSED_KONG_CONFIG
-
-# Inicia o Kong com os parâmetros corretos
-# 'exec' substitui o processo do shell pelo do Kong, o que é uma boa prática
+# Inicia o Kong
 exec kong start
