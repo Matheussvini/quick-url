@@ -3,7 +3,9 @@ _format_version: '3.0'
 services:
   # --- SERVIÇO DE USUÁRIOS (users-api) ---
   - name: users-api-service
-    url: ${KONG_USERS_API_URL}
+    host: ${KONG_USERS_API_URL}
+    port: 3000
+    protocol: http # Defina o protocolo para HTTP para comunicação interna
     routes:
       - name: users-register-route
         paths:
@@ -19,7 +21,9 @@ services:
 
   # --- SERVIÇO DE URLs (urls-api) ---
   - name: urls-api-service
-    url: ${KONG_URLS_API_URL}
+    host: ${KONG_URLS_API_URL}
+    port: 3001
+    protocol: http # Defina o protocolo para HTTP para comunicação interna
     routes:
       - name: urls-click-route
         paths:
