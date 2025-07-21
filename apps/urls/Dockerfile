@@ -11,7 +11,6 @@ FROM base AS build
 
 WORKDIR /app
 COPY . . 
-RUN npm run prisma:generate:urls
 RUN npm run build:urls
 
 # === Stage 3: Production - Aplicação pronta para rodar ===

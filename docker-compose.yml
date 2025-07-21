@@ -67,8 +67,8 @@ services:
     build:
       context: .
       dockerfile: apps/users/Dockerfile
-    ports:
-      - '3000:3000'
+    expose:
+      - '3000'
     depends_on:
       redpanda:
         condition: service_healthy
@@ -87,8 +87,8 @@ services:
     build:
       context: .
       dockerfile: apps/urls/Dockerfile
-    ports:
-      - '3001:3001'
+    expose:
+      - '3001'
     depends_on:
       redpanda:
         condition: service_healthy
@@ -102,6 +102,35 @@ services:
       - .:/usr/src/app
       - /usr/src/app/node_modules
 
+  kong-gateway:
+    image: kong:3.9.1 # Mesma versão do migrations
+    environment:
+      KONG_DATABASE: off
+      KONG_PG_HOST: kong-database
+      KONG_PG_USER: kong
+      KONG_PG_PASSWORD: kong_password
+      KONG_ADMIN_LISTEN: 0.0.0.0:8001, 0.0.0.0:8444 ssl # Porta da Admin API (8001)
+      KONG_PROXY_LISTEN: 0.0.0.0:8000, 0.0.0.0:8443 ssl # Porta Proxy (8000)
+      KONG_PROXY_ACCESS_LOG: /dev/stdout
+      KONG_ADMIN_ACCESS_LOG: /dev/stdout
+      KONG_PROXY_ERROR_LOG: /dev/stderr
+      KONG_ADMIN_ERROR_LOG: /dev/stderr
+      KONG_DECLARATIVE_CONFIG: /etc/kong/kong.yml # Aponta para o arquivo de config declarativa
+    ports:
+      - '80:8000' # Mapeia a porta HTTP padrão para a porta proxy do Kong
+      - '443:8443' # Mapeia a porta HTTPS padrão para a porta proxy do Kong (se for usar SSL)
+      - '8001:8001' # Mapeia a porta Admin API para gerenciamento
+    volumes:
+      - ./kong/kong.yml:/etc/kong/kong.yml:ro # Monta o arquivo de configuração declarativa
+    depends_on:
+      users-api:
+        condition: service_started
+      urls-api:
+        condition: service_started
+    networks:
+      - app-net
+
+  # docker-compose.yml (apenas o serviço kong-configurator)
 networks:
   app-net:
     driver: bridge

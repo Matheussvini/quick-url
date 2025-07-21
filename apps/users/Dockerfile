@@ -11,7 +11,6 @@ FROM base AS build
 
 WORKDIR /app
 COPY . .
-RUN npm run prisma:generate:users
 RUN npm run build:users
 
 # === Stage 3: Production - Aplicação pronta para rodar ===
