@@ -1,6 +1,6 @@
 #!/bin/sh
 set -e
 
-envsubst < /tmp/kong.yml.template > /etc/kong/kong.yml
+envsubst < /etc/kong/kong.yml > /tmp/kong.yml
 
 exec kong start
