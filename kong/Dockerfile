@@ -1,9 +1,9 @@
 FROM kong:3.9.1
 
-COPY kong/entrypoint.sh /tmp/entrypoint.sh
-RUN chmod +x /tmp/entrypoint.sh
-
-RUN mv /tmp/entrypoint.sh /usr/local/bin/kong-entrypoint.sh
+USER root
+COPY kong/entrypoint.sh /usr/local/bin/kong-entrypoint.sh
+RUN chmod +x /usr/local/bin/kong-entrypoint.sh
+USER kong
 
 COPY kong/kong.yml /etc/kong/kong.yml
 
