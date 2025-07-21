@@ -3,7 +3,7 @@ _format_version: '3.0'
 services:
   # --- SERVIÇO DE USUÁRIOS (users-api) ---
   - name: users-api-service
-    url: http://users-api:3000
+    url: ${KONG_USERS_API_URL}
     routes:
       - name: users-register-route
         paths:
@@ -19,7 +19,7 @@ services:
 
   # --- SERVIÇO DE URLs (urls-api) ---
   - name: urls-api-service
-    url: http://urls-api:3001
+    url: ${KONG_URLS_API_URL}
     routes:
       - name: urls-click-route
         paths:
