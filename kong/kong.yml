@@ -1,11 +1,9 @@
 _format_version: '3.0'
 
-_proxy_listen: ${KONG_PROXY_LISTEN}
-_admin_listen: ${KONG_ADMIN_LISTEN}
-
 services:
+  # --- SERVIÇO DE USUÁRIOS (users-api) ---
   - name: users-api-service
-    host: __KONG_USERS_API_URL__
+    host: '${KONG_USERS_API_URL}'
     port: 3000
     routes:
       - name: users-register-route
@@ -13,14 +11,16 @@ services:
           - /users
         methods: ['POST']
         strip_path: false
+
       - name: users-authenticate-route
         paths:
           - /users/authenticate
         methods: ['POST']
         strip_path: false
 
+  # --- SERVIÇO DE URLs (urls-api) ---
   - name: urls-api-service
-    host: __KONG_URLS_API_URL__
+    host: '${KONG_URLS_API_URL}'
     port: 3001
     routes:
       - name: urls-click-route
@@ -28,6 +28,7 @@ services:
           - /
         methods: ['GET']
         strip_path: false
+
       - name: urls-operations-routes
         paths:
           - /urls
