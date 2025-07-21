@@ -1,9 +1,9 @@
 _format_version: '3.0'
 
 services:
-  # --- SERVIÇO DE USUÁRIOS (users-api) ---
   - name: users-api-service
-    host: '${KONG_USERS_API_URL}'
+    host: 'users-api' # Nome do serviço no Render
+    port: 10000 # Porta interna que o users-api escuta (do log: 🚀 HTTP Server USERS running on port 10000!)
     routes:
       - name: users-register-route
         paths:
@@ -17,9 +17,9 @@ services:
         methods: ['POST']
         strip_path: false
 
-  # --- SERVIÇO DE URLs (urls-api) ---
   - name: urls-api-service
-    host: '${KONG_URLS_API_URL}'
+    host: 'urls-api' # Nome do serviço no Render
+    port: 10000 # Porta interna que o urls-api escuta (presumindo que também use 10000)
     routes:
       - name: urls-click-route
         paths:
