@@ -1,21 +1,48 @@
 services:
-  database:
-    container_name: micro_db
-    image: "postgres:alpine"
+  database_users:
+    container_name: micro_db_users
+    image: 'bitnami/postgresql:latest'
     ports:
-      - "5432:5432"
+      - '5433:5432'
     environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=docker
+      - POSTGRESQL_USERNAME=postgres
+      - POSTGRESQL_PASSWORD=docker
+      - POSTGRESQL_DATABASE=users_db
     networks:
       - app-net
+    volumes:
+      - db_users_data:/bitnami/postgresql
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U postgres -d users_db']
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  database_urls:
+    container_name: micro_db_urls
+    image: 'bitnami/postgresql:latest'
+    ports:
+      - '5434:5432'
+    environment:
+      - POSTGRESQL_USERNAME=postgres
+      - POSTGRESQL_PASSWORD=docker
+      - POSTGRESQL_DATABASE=urls_db
+    networks:
+      - app-net
+    volumes:
+      - db_urls_data:/bitnami/postgresql
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U postgres -d urls_db']
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
   redpanda:
     container_name: micro_redpanda
     image: redpandadata/redpanda:latest
     ports:
-      - "9092:9092"
-      - "9644:9644"
+      - '9092:9092'
+      - '9644:9644'
     command:
       - redpanda
       - start
@@ -26,25 +53,88 @@ services:
       - --node-id 0
       - --check=false
       - --kafka-addr INTERNAL://0.0.0.0:9093,EXTERNAL://0.0.0.0:9092
-      - --advertise-kafka-addr INTERNAL://micro_redpanda:9093,EXTERNAL://localhost:9092
+      - --advertise-kafka-addr INTERNAL://redpanda:9093,EXTERNAL://localhost:9092
     networks:
       - app-net
+    healthcheck:
+      test: ['CMD', 'rpk', 'cluster', 'health']
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   users-api:
     container_name: micro_users
     build:
-      context: ./apps/users
-      dockerfile: Dockerfile
-    ports:
-      - "3000:3000"
+      context: .
+      dockerfile: apps/users/Dockerfile
+    expose:
+      - '3000'
     depends_on:
-      - redpanda
-      - database
+      redpanda:
+        condition: service_healthy
+      database_users:
+        condition: service_healthy
     networks:
       - app-net
     env_file:
       - ./apps/users/.env
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
 
+  urls-api:
+    container_name: micro_urls
+    build:
+      context: .
+      dockerfile: apps/urls/Dockerfile
+    expose:
+      - '3001'
+    depends_on:
+      redpanda:
+        condition: service_healthy
+      database_urls:
+        condition: service_healthy
+    networks:
+      - app-net
+    env_file:
+      - ./apps/urls/.env
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+
+  kong-gateway:
+    image: kong:3.9.1 # Mesma versão do migrations
+    environment:
+      KONG_DATABASE: off
+      KONG_PG_HOST: kong-database
+      KONG_PG_USER: kong
+      KONG_PG_PASSWORD: kong_password
+      KONG_ADMIN_LISTEN: 0.0.0.0:8001, 0.0.0.0:8444 ssl # Porta da Admin API (8001)
+      KONG_PROXY_LISTEN: 0.0.0.0:8000, 0.0.0.0:8443 ssl # Porta Proxy (8000)
+      KONG_PROXY_ACCESS_LOG: /dev/stdout
+      KONG_ADMIN_ACCESS_LOG: /dev/stdout
+      KONG_PROXY_ERROR_LOG: /dev/stderr
+      KONG_ADMIN_ERROR_LOG: /dev/stderr
+      KONG_DECLARATIVE_CONFIG: /etc/kong/kong.yml # Aponta para o arquivo de config declarativa
+    ports:
+      - '80:8000' # Mapeia a porta HTTP padrão para a porta proxy do Kong
+      - '443:8443' # Mapeia a porta HTTPS padrão para a porta proxy do Kong (se for usar SSL)
+      - '8001:8001' # Mapeia a porta Admin API para gerenciamento
+    volumes:
+      - ./kong/kong.yml:/etc/kong/kong.yml:ro # Monta o arquivo de configuração declarativa
+    depends_on:
+      users-api:
+        condition: service_started
+      urls-api:
+        condition: service_started
+    networks:
+      - app-net
+
+  # docker-compose.yml (apenas o serviço kong-configurator)
 networks:
   app-net:
     driver: bridge
+
+volumes:
+  db_users_data:
+  db_urls_data:

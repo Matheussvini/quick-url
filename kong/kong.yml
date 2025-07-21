@@ -1,0 +1,34 @@
+_format_version: '3.0'
+
+services:
+  # --- SERVIÇO DE USUÁRIOS (users-api) ---
+  - name: users-api-service
+    url: http://users-api:3000
+    routes:
+      - name: users-register-route
+        paths:
+          - /users
+        methods: ['POST']
+        strip_path: false
+
+      - name: users-authenticate-route
+        paths:
+          - /users/authenticate
+        methods: ['POST']
+        strip_path: false
+
+  # --- SERVIÇO DE URLs (urls-api) ---
+  - name: urls-api-service
+    url: http://urls-api:3001
+    routes:
+      - name: urls-click-route
+        paths:
+          - /
+        methods: ['GET']
+        strip_path: false
+
+      - name: urls-operations-routes
+        paths:
+          - /urls
+        methods: ['GET', 'POST', 'PATCH', 'DELETE']
+        strip_path: false

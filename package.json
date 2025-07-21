@@ -6,9 +6,13 @@
     "apps/*"
   ],
   "scripts": {
-    "prepare": "husky",
+    "prepare": "husky install",
     "lint": "eslint . --ext .ts --fix",
+    "start:urls": "npm -w apps/urls run start",
+    "start:users": "npm -w apps/users run start",
     "build": "npm -w apps/users run build && npm -w apps/urls run build",
+    "build:users": "npm -w apps/users run build",
+    "build:urls": "npm -w apps/urls run build",
     "dev:users": "npm -w apps/users run start:dev",
     "dev:urls": "npm -w apps/urls run start:dev",
     "dev:all": "npm run dev:users & npm run dev:urls",
@@ -18,7 +22,11 @@
     "prisma:generate:urls": "npx prisma generate --schema=./apps/urls/prisma/schema.prisma",
     "prisma:generate:all": "npm run prisma:generate:users && npm run prisma:generate:urls",
     "prisma:migrate:dev:users": "npx prisma migrate dev --schema=./apps/users/prisma/schema.prisma",
-    "prisma:migrate:dev:urls": "npx prisma migrate dev --schema=./apps/urls/prisma/schema.prisma"
+    "prisma:migrate:dev:urls": "npx prisma migrate dev --schema=./apps/urls/prisma/schema.prisma",
+    "prisma:migrate:dev:all": "npm run prisma:migrate:dev:users && npm run prisma:migrate:dev:urls",
+    "prisma:migrate:deploy:users": "npx prisma migrate deploy --schema=./apps/users/prisma/schema.prisma",
+    "prisma:migrate:deploy:urls": "npx prisma migrate deploy --schema=./apps/urls/prisma/schema.prisma",
+    "prisma:migrate:deploy:all": "npm run prisma:migrate:deploy:users && npm run prisma:migrate:deploy:urls"
   },
   "keywords": [],
   "author": "",
