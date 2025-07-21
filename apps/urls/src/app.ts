@@ -13,3 +13,6 @@ app.register(fastifyJwt, {
 app.register(urlsRoutes);
 app.register(clicksRoutes);
 app.setErrorHandler(errorHandler);
+app.get('/doc', async (request, reply) => {
+  return reply.redirect('https://github.com/Matheussvini/quick-url#readme');
+});
