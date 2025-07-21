@@ -2,17 +2,18 @@ FROM kong:3.9.1
 
 USER root
 
-# Instala envsubst (vem com gettext)
-RUN apk add --no-cache gettext
+# Instala envsubst (via gettext) usando apt
+RUN apt-get update && \
+    apt-get install -y gettext-base && \
+    rm -rf /var/lib/apt/lists/*
 
-# Copia entrypoint e garante que é executável
+# Copia entrypoint
 COPY kong/entrypoint.sh /usr/local/bin/kong-entrypoint.sh
 RUN chmod +x /usr/local/bin/kong-entrypoint.sh
 
-# Copia arquivo de configuração declarativa
+# Copia config
 COPY kong/kong.yml /etc/kong/kong.yml
 
-# Volta para usuário padrão
 USER kong
 
 ENTRYPOINT ["/usr/local/bin/kong-entrypoint.sh"]
