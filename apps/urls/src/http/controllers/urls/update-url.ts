@@ -4,16 +4,16 @@ import { makeUpdateUrlUseCase } from '@/application/use-cases/factories/make-upd
 import { FastifyReply, FastifyRequest } from 'fastify';
 import z from 'zod';
 
-export async function updateUrl(request: FastifyRequest, reply: FastifyReply) {
+const updateUrlParamsSchema = z.object({
+  id: z.uuid(),
+});
+
+const updateUrlBodySchema = z.object({
+  new_url: z.url(),
+});
+
+async function handler(request: FastifyRequest, reply: FastifyReply) {
   const external_id = request.user.sub ?? null;
-
-  const updateUrlParamsSchema = z.object({
-    id: z.uuid(),
-  });
-
-  const updateUrlBodySchema = z.object({
-    new_url: z.url(),
-  });
 
   const { id } = updateUrlParamsSchema.parse(request.params);
   const { new_url } = updateUrlBodySchema.parse(request.body);
@@ -40,3 +40,26 @@ export async function updateUrl(request: FastifyRequest, reply: FastifyReply) {
     throw err;
   }
 }
+const updateUrlSchema = {
+  summary: 'Update a source URL',
+  description:
+    'Endpoint to update an existing source URL owned by the authenticated user',
+  tags: ['Urls'],
+  params: updateUrlParamsSchema,
+  body: updateUrlBodySchema,
+  response: {
+    200: z.object({
+      updated_url: z.object({
+        id: z.string(),
+        short_code: z.string(),
+        original_url: z.string(),
+        clicks_count: z.number(),
+      }),
+    }),
+    403: z.object({ message: z.string() }).describe('Invalid credentials'),
+    404: z.object({ message: z.string() }).describe('URL or Owner not found'),
+  },
+  security: [{ bearerAuth: [] }],
+};
+
+export const updateUrl = { schema: updateUrlSchema, handler };

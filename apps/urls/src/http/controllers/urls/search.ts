@@ -3,15 +3,15 @@ import { makeSearchOwnerUrlsUseCase } from '@/application/use-cases/factories/ma
 import { FastifyReply, FastifyRequest } from 'fastify';
 import z from 'zod';
 
-export async function search(request: FastifyRequest, reply: FastifyReply) {
+const searchOwnerUrlsQuerySchema = z.object({
+  query: z.string().optional(),
+  page: z.coerce.number().int().min(1).default(1),
+});
+
+async function handler(request: FastifyRequest, reply: FastifyReply) {
   const external_id = request.user.sub ?? null;
 
-  const searchOwnerUrlsQuerySchema = z.object({
-    query: z.string().default(''),
-    page: z.coerce.number().int().min(1).default(1),
-  });
-
-  const { query, page } = searchOwnerUrlsQuerySchema.parse(request.query);
+  const { query = '', page } = searchOwnerUrlsQuerySchema.parse(request.query);
 
   try {
     const searchOwnerUrlsUseCase = makeSearchOwnerUrlsUseCase();
@@ -36,3 +36,27 @@ export async function search(request: FastifyRequest, reply: FastifyReply) {
     throw err;
   }
 }
+
+const schema = {
+  summary: 'Search URLs by owner',
+  description: 'Endpoint to search URLs owned by the authenticated user',
+  tags: ['Urls'],
+  querystring: searchOwnerUrlsQuerySchema,
+  response: {
+    200: z.object({
+      urls: z.array(
+        z.object({
+          id: z.string(),
+          short_code: z.string(),
+          original_url: z.string(),
+          clicks_count: z.number(),
+          shortened_url: z.string().optional(),
+        }),
+      ),
+    }),
+    404: z.object({ message: z.string() }).describe('Owner not found'),
+  },
+  security: [{ bearerAuth: [] }],
+};
+
+export const search = { schema, handler };
