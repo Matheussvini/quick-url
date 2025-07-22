@@ -3,13 +3,13 @@ import { makeRegisterUseCase } from '@/application/use-cases/factories/make-regi
 import { FastifyReply, FastifyRequest } from 'fastify';
 import z from 'zod';
 
-export async function register(request: FastifyRequest, reply: FastifyReply) {
-  const registerBodySchema = z.object({
-    name: z.string().nonempty(),
-    email: z.email(),
-    password: z.string().min(6),
-  });
+const registerBodySchema = z.object({
+  name: z.string().nonempty(),
+  email: z.email(),
+  password: z.string().min(6),
+});
 
+async function handler(request: FastifyRequest, reply: FastifyReply) {
   const { name, email, password } = registerBodySchema.parse(request.body);
 
   try {
@@ -26,5 +26,18 @@ export async function register(request: FastifyRequest, reply: FastifyReply) {
     }
     throw err;
   }
-  return reply.status(201).send();
+  return reply.status(201).send('User registered successfully');
 }
+
+const schema = {
+  summary: 'Register a new user',
+  description: 'Endpoint to register a new user in the system',
+  tags: ['Users'],
+  body: registerBodySchema,
+  response: {
+    201: z.string().describe('User registered successfully'),
+    409: z.object({ message: z.string() }),
+  },
+};
+
+export const register = { schema, handler };

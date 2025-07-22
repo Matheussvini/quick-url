@@ -3,12 +3,12 @@ import { makeShortenUrlUseCase } from '@/application/use-cases/factories/make-sh
 import { FastifyReply, FastifyRequest } from 'fastify';
 import z from 'zod';
 
-export async function shortenUrl(request: FastifyRequest, reply: FastifyReply) {
-  const external_id = request.user?.sub ?? null;
+const shortenUrlBodySchema = z.object({
+  url: z.url(),
+});
 
-  const shortenUrlBodySchema = z.object({
-    url: z.url(),
-  });
+async function handler(request: FastifyRequest, reply: FastifyReply) {
+  const external_id = request.user?.sub ?? null;
 
   const { url } = shortenUrlBodySchema.parse(request.body);
 
@@ -32,3 +32,18 @@ export async function shortenUrl(request: FastifyRequest, reply: FastifyReply) {
     throw err;
   }
 }
+
+const schema = {
+  summary: 'Shorten a URL',
+  description: 'Endpoint to shorten a given URL',
+  tags: ['Urls'],
+  body: shortenUrlBodySchema,
+  response: {
+    201: z.object({
+      shortUrl: z.string().describe('Shortened URL'),
+    }),
+    404: z.object({ message: z.string() }).describe('Owner not found'),
+  },
+};
+
+export const shortenUrl = { schema, handler };

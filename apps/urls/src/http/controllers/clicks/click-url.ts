@@ -3,11 +3,11 @@ import { makeClickUrlUseCase } from '@/application/use-cases/factories/make-clic
 import { FastifyReply, FastifyRequest } from 'fastify';
 import z from 'zod';
 
-export async function clickUrl(request: FastifyRequest, reply: FastifyReply) {
-  const clickUrlParamsSchema = z.object({
-    short_code: z.string().max(6),
-  });
+const clickUrlParamsSchema = z.object({
+  short_code: z.string().max(6),
+});
 
+async function handler(request: FastifyRequest, reply: FastifyReply) {
   const { short_code } = clickUrlParamsSchema.parse(request.params);
 
   try {
@@ -21,3 +21,17 @@ export async function clickUrl(request: FastifyRequest, reply: FastifyReply) {
     throw err;
   }
 }
+
+const schema = {
+  summary: 'Access shortened URL, be redirected and register click',
+  description:
+    'Endpoint to access a shortened URL, be redirected to the original URL, and register the click',
+  tags: ['Clicks'],
+  params: clickUrlParamsSchema,
+  response: {
+    302: z.object({}).describe('Redirects to the original URL'),
+    404: z.object({ message: z.string() }).describe('Shortened URL not found'),
+  },
+};
+
+export const clickUrl = { schema, handler };

@@ -4,12 +4,12 @@ import { makeDeleteUrlUseCase } from '@/application/use-cases/factories/make-del
 import { FastifyReply, FastifyRequest } from 'fastify';
 import z from 'zod';
 
-export async function deleteUrl(request: FastifyRequest, reply: FastifyReply) {
-  const external_id = request.user.sub ?? null;
+const deleteUrlParamsSchema = z.object({
+  id: z.uuid(),
+});
 
-  const deleteUrlParamsSchema = z.object({
-    id: z.uuid(),
-  });
+async function handler(request: FastifyRequest, reply: FastifyReply) {
+  const external_id = request.user.sub ?? null;
 
   const { id } = deleteUrlParamsSchema.parse(request.params);
 
@@ -30,3 +30,18 @@ export async function deleteUrl(request: FastifyRequest, reply: FastifyReply) {
     throw err;
   }
 }
+
+const schema = {
+  summary: 'Delete a URL',
+  description: 'Endpoint to logically delete a URL by its ID',
+  tags: ['Urls'],
+  params: deleteUrlParamsSchema,
+  response: {
+    204: z.void().describe('URL deleted successfully'),
+    403: z.object({ message: z.string() }).describe('Invalid credentials'),
+    404: z.object({ message: z.string() }).describe('URL or Owner not found'),
+  },
+  security: [{ bearerAuth: [] }],
+};
+
+export const deleteUrl = { schema, handler };

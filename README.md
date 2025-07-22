@@ -76,8 +76,19 @@ It is fully containerized with **Docker** and **Docker Compose**, deployable bot
 - **Vitest:** Fast unit and integration testing framework.
 - **ESLint & Prettier:** Code linting and formatting for consistency.
 - **Husky:** Git hooks for enforcing code quality pre-commit.
+- **Swagger**: API documentation and testing.
 - **GitHub Actions:** CI/CD pipelines for linting, building, and testing.
 - **Docker & Docker Compose:** Containerization and orchestration for consistent local and cloud deployments.
+
+# Documentations
+
+The APIs documentations can be accessed by visiting the following route:
+
+[**Users API Documentation**](https://users-api-9bzk.onrender.com/swagger)
+<br>
+[**Urls API Documentation**](https://users-api-9bzk.onrender.com/swagger)
+
+The documentation provides detailed information about the available endpoints, request and response formats, authentication requirements, and example requests and responses. It serves as a valuable resource for understanding and utilizing the functionalities provided by the API.
 
 ## 🗄️ Database Schema
 

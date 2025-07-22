@@ -3,15 +3,12 @@ import { makeAuthenticateUseCase } from '@/application/use-cases/factories/make-
 import { FastifyReply, FastifyRequest } from 'fastify';
 import z from 'zod';
 
-export async function authenticate(
-  request: FastifyRequest,
-  reply: FastifyReply,
-) {
-  const authenticateBodySchema = z.object({
-    email: z.email(),
-    password: z.string().min(6),
-  });
+const authenticateBodySchema = z.object({
+  email: z.email(),
+  password: z.string().min(6),
+});
 
+async function handler(request: FastifyRequest, reply: FastifyReply) {
   const { email, password } = authenticateBodySchema.parse(request.body);
 
   try {
@@ -35,3 +32,16 @@ export async function authenticate(
     throw err;
   }
 }
+
+const schema = {
+  summary: 'Authenticate a user',
+  description: 'Endpoint to authenticate a user and return a JWT token',
+  tags: ['Users'],
+  body: authenticateBodySchema,
+  response: {
+    200: z.object({ token: z.string() }).describe('Authentication successful'),
+    401: z.object({ message: z.string() }).describe('Invalid credentials'),
+  },
+};
+
+export const authenticate = { schema, handler };
